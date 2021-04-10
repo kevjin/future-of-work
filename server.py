@@ -27,7 +27,15 @@ def push_strokes():
 
 @app.route('/new_strokes', methods=['GET'])
 def get_strokes():
-    new_strokes = [[675, 200, 673, 200], [673, 200, 669, 206], [669, 206, 657, 222], [657, 222, 640, 250], [640, 250, 623, 284], [623, 284, 615, 302], [615, 302, 613, 315], [613, 315, 612, 326], [612, 326, 612, 333], [612, 333, 619, 339], [619, 339, 635, 340], [635, 340,657, 340], [657, 340, 691, 340], [691, 340, 725, 336], [725, 336, 754, 328], [754, 328, 770, 322], [770, 322, 780, 316], [780, 316, 789, 307], [789, 307, 791, 299], [791, 299, 785, 285], [785, 285, 770, 270], [770, 270, 743, 254], [743, 254, 694, 245]]
+    new_strokes_raw = redis_wrapper.get_last_n()
+
+    new_strokes = []
+    for raw_stroke in new_strokes_raw:
+        stroke = raw_stroke.decode("utf-8").split(", ")
+        for i in range(len(stroke)):
+            stroke[i] = int(stroke[i])
+        new_strokes.append(stroke)
+
     return {
         "strokes": new_strokes
     }
