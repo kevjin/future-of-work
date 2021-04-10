@@ -10,6 +10,12 @@ app.config["DEBUG"] = True
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
+@app.route('/dbsuccess')
+def home():
+    set_data(key="foo", value="bar")
+    assert get_data(value="foo") == "bar"
+    return "ok"
+
 @app.route('/')
 def home():
     return send_from_directory('static', "index.html")
