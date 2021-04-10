@@ -20,6 +20,7 @@ canvas.addEventListener('mousedown', e => {
 canvas.addEventListener('mousemove', e => {
   if (isDrawing === true) {
     drawLine(context, x, y, e.offsetX, e.offsetY);
+    unsavedLines.push([x, y, e.offsetX, e.offsetY])
     x = e.offsetX;
     y = e.offsetY;
   }
@@ -42,14 +43,13 @@ function drawLine(context, x1, y1, x2, y2) {
   context.lineTo(x2, y2);
   context.stroke();
   context.closePath();
-  unsavedLines.push([x1, y1, x2, y2])
 }
 
 function pushLines() {
   console.log("push lines" + unsavedLines.length)
   console.log(unsavedLines)
 
-  fetch("http://localhost:5000/new_strokes", {
+  fetch("http://ec2-52-11-100-237.us-west-2.compute.amazonaws.com:5000/new_strokes", {
     headers: {
       'Content-Type': 'application/json'
     },
@@ -67,7 +67,7 @@ function pushLines() {
 }
 
 function fetchRecentLines() {
-  fetch("http://localhost:5000/new_strokes", {
+  fetch("http://ec2-52-11-100-237.us-west-2.compute.amazonaws.com:5000/new_strokes", {
     headers: {
       'Content-Type': 'application/json'
     },
@@ -79,7 +79,7 @@ function fetchRecentLines() {
   );
 }
 
-setInterval(fetchRecentLines, 1000)
+setInterval(fetchRecentLines, 2000)
 
 function populateLines(lines) {
   lines.forEach((line) => {

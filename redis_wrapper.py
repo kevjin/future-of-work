@@ -1,7 +1,7 @@
 import redis
 
 r = redis.Redis(host='localhost', port=6379, db=0)
-n=1000 #how many record/keys should the db be keeping track of
+n=4000 #how many record/keys should the db be keeping track of
 last_n_key=f"last{n}keys"
 
 def set_data(key, value):
