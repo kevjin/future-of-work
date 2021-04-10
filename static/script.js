@@ -65,3 +65,24 @@ function pushLines() {
 
   unsavedLines = []
 }
+
+function fetchRecentLines() {
+  fetch("http://localhost:5000/new_strokes", {
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    method : "GET"
+  }).then(
+      response => response.json()
+  ).then(
+      respData => populateLines(respData["strokes"])
+  );
+}
+
+setInterval(fetchRecentLines, 1000)
+
+function populateLines(lines) {
+  lines.forEach((line) => {
+    drawLine(context, ...line)
+  })
+}
