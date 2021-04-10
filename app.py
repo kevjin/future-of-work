@@ -1,12 +1,10 @@
 from typing import List
 import flask
+import redis_wrapper
 import sqlite3
 from flask import request, jsonify, Flask, abort, Response, send_from_directory
 from flask_cors import CORS, cross_origin
 from flask_sqlalchemy import SQLAlchemy
-
-import redis
-r = redis.Redis(host='localhost', port=6379, db=0)
 
 
 app = Flask(__name__, static_url_path='')
@@ -14,35 +12,22 @@ app.config["DEBUG"] = True
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
-def set_data(key, value):
-    try: 
-        success=r.set(key, value)
-        return success
-    except:
-        return "error setting data"
-def get_data(key):
-    
-    try: 
-        res=r.get(key)
-        return res
-    except:
-        return "Nay!", 202
-
 @app.route('/dbsuccess')
 def connect():
-    set_data(key="foo", value="bar")
-    try:
-        res=get_data(key="foo")
-        if res == "bar":
-            return "ok"
-        else:
-            return res
-    except Exception as e:
-        return e
+    redis_wrapper.set_data(key="foo", value="bar")
+    resp = redis_wrapper.get_data(key="foo")
+    assert "bar" in str(resp)
+    return "ok"
 
 @app.route('/')
 def home():
     return send_from_directory('static', "index.html")
+
+@app.route('/new_strokes', methods=['POST'])
+def push():
+    data = request.json
+    print(data["strokes"])
+    return "ok"
 
 @app.route('/static/<path:path>')
 def send_static(path):
