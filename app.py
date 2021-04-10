@@ -5,16 +5,40 @@ from flask import request, jsonify, Flask, abort, Response, send_from_directory
 from flask_cors import CORS, cross_origin
 from flask_sqlalchemy import SQLAlchemy
 
+import redis
+r = redis.Redis(host='localhost', port=6379, db=0)
+
+
 app = Flask(__name__, static_url_path='')
 app.config["DEBUG"] = True
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
+def set_data(key, value):
+    try: 
+        success=r.set(key, value)
+        return success
+    except:
+        return "error setting data"
+def get_data(key):
+    
+    try: 
+        res=r.get(key)
+        return res
+    except:
+        return "Nay!", 202
+
 @app.route('/dbsuccess')
-def home():
+def connect():
     set_data(key="foo", value="bar")
-    assert get_data(value="foo") == "bar"
-    return "ok"
+    try:
+        res=get_data(key="foo")
+        if res == "bar":
+            return "ok"
+        else:
+            return res
+    except Exception as e:
+        return e
 
 @app.route('/')
 def home():
