@@ -11,7 +11,7 @@ cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
 @app.route('/dbsuccess')
-def home():
+def dbsuccess():
     set_data(key="foo", value="bar")
     assert get_data(value="foo") == "bar"
     return "ok"
