@@ -22,6 +22,7 @@ def home():
 def push_strokes():
     data = request.json
     print(data["strokes"])
+    redis_wrapper.insert_stroke(data['strokes'])
     return "ok"
 
 @app.route('/new_strokes', methods=['GET'])
